@@ -165,3 +165,67 @@ Dump.inspect("<<3::size(2), 5::size(4), 1::size(2)>>=", bin)
 
 :io.format("bin=~-8.2b~n", :binary.bin_to_list(bin))
 Dump.puts("size bin=", size bin)
+
+# Operators.
+IO.puts("\nOperators")
+Dump.puts("Strict equality: 1 === 1 -> ", 1 === 1)
+Dump.puts("Strict equality: 1 === 1.0 -> ", 1 === 1.0)
+Dump.puts("Strict inequality: 1 !== 1 -> ", 1 !== 1)
+Dump.puts("Strict inequality: 1 !== 1.0 -> ", 1 !== 1.0)
+
+Dump.puts("\nValue equality: 1 == 1 -> ", 1 == 1)
+Dump.puts("Value equality: 1 == 1.0 -> ", 1 == 1.0)
+Dump.puts("Value inequality: 1 != 1 -> ", 1 != 1)
+Dump.puts("Value inequality: 1 != 1.0 -> ", 1 != 1.0)
+
+Dump.puts("\nGreater than: 1 > 1.0 -> ", 1 > 1.0)
+Dump.puts("Greater than or equal: 1 >= 1.0 -> ", 1 >= 1.0)
+Dump.puts("Less than: 1 < (1 + (1 / 1.0e308)) -> ",
+					1 < 1.0 + (1 / 1.0e308))
+Dump.puts("Less than or equal: 1 <= (1 + (1 / 1.0e308)) -> ",
+					1 <= 1.0 + (1 / 1.0e308))
+
+IO.puts("\nComparing different types")
+Dump.inspect(~s|a > :a -> |, "a" > :a)
+a_ref = make_ref()							
+Dump.inspect(~s|<<1>> >= a_ref -> |, <<1>> >= a_ref)
+
+IO.puts("\nBoolean operators expect true or false/nil")
+Dump.puts("false or 1 -> ", false or 1)
+Dump.puts("true or 1 -> ", true or 1)
+Dump.puts("true and 1 -> ", true and 1)
+Dump.puts("false and 1 -> ", false and 1)
+
+Dump.puts("false xor true -> ", false xor true)
+Dump.puts("false xor false -> ", false xor false)
+Dump.puts("true xor true -> ", true xor true)
+Dump.puts("true xor false -> ", true xor false)
+
+Dump.puts("not true -> ", not true)
+Dump.puts("not false -> ", not false)
+
+IO.puts("\nRelaxed boolean operators")
+Dump.puts("1 || 2 -> ", 1 || 2)
+Dump.puts("nil || 2 -> ", nil || 2)
+Dump.inspect("nil && 2 -> ", nil && 2)
+Dump.puts("1 && 2 -> ", 1 && 2)
+
+Dump.puts("!nil ->", ! nil)
+Dump.puts("!2 ->", ! 2)
+
+# Arithmetic operators
+IO.puts("\nArithmetic operators.")
+Dump.puts("1 / 2 -> ", 1 / 2)
+Dump.puts("div(7, 3) -> ", div(7, 3))
+Dump.puts("rem(7, 3) -> ", rem(7, 3))
+IO.puts("Sign behavior of rem")
+Dump.puts("rem(-7, 3) -> ", rem(-7, 3))
+Dump.puts("rem(7, -3) -> ", rem(7, -3))
+
+# Join operators
+IO.puts("\nConcatenate two binaries")
+Dump.inspect("<<1, 2>> <> <<2, 3>> -> ", <<1, 2>> <> <<2, 3>>)
+Dump.inspect("3 in 2..5 -> ", 3 in 2..5)
+Dump.inspect("2 in 2..5 -> ", 2 in 2..5)
+Dump.inspect("5 in 2..5 -> ", 5 in 2..5)
+Dump.inspect("6 in 2..6 -> ", 6 in 2..5)
