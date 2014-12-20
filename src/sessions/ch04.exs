@@ -1,4 +1,16 @@
+defmodule Dump do
+	def inspect(prefix, o) do
+		IO.write "#{prefix}"
+		IO.inspect o
+	end
+
+	def puts(prefix, o) do
+		IO.puts "#{prefix}#{o}"
+	end
+end
+
 # Decimal integers
+IO.puts "Integers with different bases"
 i = 1234
 IO.puts "Decimal: 1234=#{i}"
 j = 0xcafe
@@ -19,17 +31,6 @@ defmodule Factorial do
 	end
 end
 
-defmodule Dump do
-	def inspect(prefix, o) do
-		IO.write "#{prefix}"
-		IO.inspect o
-	end
-
-	def puts(prefix, o) do
-		IO.puts "#{prefix}#{o}"
-	end
-end
-
 long_integer_text ="#{Factorial.of(10000)}"
 IO.puts "\nArbitrary sized integers: Factorial.of(10000)="
 IO.puts "  #{String.slice(long_integer_text, 0..32)}..."
@@ -46,7 +47,7 @@ Enum.each([:fred, :is_binary?, :var@2, :<>, :===,
 					 :"func/3", :"long john silver"], &(Dump.inspect "  ", &1))
 
 # Ranges
-IO.puts "\nRanges"
+IO.puts "\nRanges (include the last number)"
 IO.inspect 1..43
 IO.inspect 3.14..3.15
 Enum.each 1..7, fn n -> IO.write n end
@@ -90,30 +91,31 @@ Dump.inspect "status=#{status}, file=", file
 File.close(file)
 
 # Idiomatic matching for :ok status.
-{ok, file} = File.open(filename)
+{:ok, file} = File.open(filename)
 Dump.inspect "Successfully opened file: ", file
+File.close(file)
 
+no_such_filename = String.replace filename, "exs", "ext"
 try do
-	no_such_filename = String.replace filename, "exs", "ext"
 	{:ok, file} = File.open(no_such_filename)
 	IO.puts "Oops. Opened file #{no_such_filename}."
 rescue
   _ ->
-		IO.puts "Expected to fail - and failed."
+		IO.puts "Expected File.open(#{no_such_filename}) to fail - and failed."
 end
 
 # Lists
 IO.puts "\nLists"
-Dump.inspect "Concatenate: ", [1, 2, 3] ++ [4, 5, 6]
-Dump.inspect "Difference: ", [1, 2, 3, 4] -- [2, 4]
+Dump.inspect "Concatenate: [1, 2, 3] ++ [4, 5, 6] -> ", [1, 2, 3] ++ [4, 5, 6]
+Dump.inspect "Difference: [1, 2, 3, 4] -- [2, 4] -> ", [1, 2, 3, 4] -- [2, 4]
 IO.puts "Membership: 4 in [1, 2, 3, 4] -> #{4 in [1, 2, 3, 4]}"
-IO.puts "Membership: 5 in [2, 3, 4] -> #{5 in [2, 3, 4]}"
+IO.puts "Membership: 1 in [2, 3, 4] -> #{1 in [2, 3, 4]}"
 
 # Keyword lists
 kw_list = [name: "Dave", city: "Dallas", likes: "Programming"]
 IO.puts "\nKeyword lists: "
 Dump.inspect("  ", kw_list)
-IO.puts "Are treated as lists of keyword-value pairs:"
+IO.puts "Are treated as lists of keyword-value pairs (tuples):"
 Enum.map kw_list, &(Dump.inspect "  ", &1)
 IO.puts "Keyword lists can have duplicated keys:"
 Dump.inspect "  ", [foo: "bar", bar: "baz", foo: "barbaz"]
@@ -132,7 +134,8 @@ Dump.inspect("response_types=", response_types)
 colors = %{:red => 0xff0000, :green => 0x00ff00, :blue => 0x0000ff}
 Dump.inspect "colors=", colors
 
-IO.puts "\nMap with many types of keys"
+IO.puts "\nMaps typically have keys of a single type,"
+IO.puts "But it is NOT required."
 Dump.inspect "  ", %{"one" => 1, :two => 2, {1, 1, 1} => 3}
 
 IO.puts "\nMap indexing using existing and non-existing keys:"
@@ -140,11 +143,11 @@ Dump.inspect ~s(  states["AL"]=), states["AL"]
 Dump.inspect ~s(  states["TX"]=), states["TX"]
 Dump.inspect(~s|  response_types[{:error, :enoent}]=|,
 							response_types[{:error, :enoent}])
-IO.puts "\nKeyword keys also support dot notation:"
+IO.puts "\nAtom keys also support dot notation:"
 Dump.inspect ~s(  colors[:red]=), colors[:red]
 Dump.inspect ~s(  colors.green=), colors.green
 
-IO.puts "\nMisspell a key with dot notation and raise KeyError."
+IO.puts "\nHowever, misspell a key with dot notation and raise KeyError."
 try do
 	IO.puts "colors.blau"
 	colors.blau
@@ -159,12 +162,19 @@ bin = <<1, 2>>
 Dump.inspect "bin=", bin
 Dump.inspect "byte_size bin=", byte_size bin
 
-IO.puts "Binaries with sizes"
+IO.puts "\n...with sizes in bytes"
 bin = <<3::size(2), 5::size(4), 1::size(2)>>
-Dump.inspect("<<3::size(2), 5::size(4), 1::size(2)>>=", bin)
+Dump.inspect("  <<3::size(2), 5::size(4), 1::size(2)>>=", bin)
 
 :io.format("bin=~-8.2b~n", :binary.bin_to_list(bin))
-Dump.puts("size bin=", size bin)
+Dump.puts("size bin (bytes)=", byte_size bin)
+
+IO.puts "\n...and in bits."
+larger_bin = <<3::size(2), 5::size(4), 1::size(2), 1::size(1)>>
+:io.format("bin=~w~n", [bin])
+:io.format("larger_bin=~w~n", [larger_bin])
+Dump.puts "byte_size(larger_bin) => ", byte_size(larger_bin)
+Dump.puts "bit_size(larger_bin) -> ", bit_size(larger_bin)
 
 # Operators.
 IO.puts("\nOperators")
@@ -184,6 +194,7 @@ Dump.puts("Less than: 1 < (1 + (1 / 1.0e308)) -> ",
 					1 < 1.0 + (1 / 1.0e308))
 Dump.puts("Less than or equal: 1 <= (1 + (1 / 1.0e308)) -> ",
 					1 <= 1.0 + (1 / 1.0e308))
+IO.puts("  (Because 1 / 1.0e308 is essentially 0)")
 
 IO.puts("\nComparing different types")
 Dump.inspect(~s|a > :a -> |, "a" > :a)
@@ -195,37 +206,54 @@ Dump.puts("false or 1 -> ", false or 1)
 Dump.puts("true or 1 -> ", true or 1)
 Dump.puts("true and 1 -> ", true and 1)
 Dump.puts("false and 1 -> ", false and 1)
-
-Dump.puts("false xor true -> ", false xor true)
-Dump.puts("false xor false -> ", false xor false)
-Dump.puts("true xor true -> ", true xor true)
-Dump.puts("true xor false -> ", true xor false)
-
 Dump.puts("not true -> ", not true)
 Dump.puts("not false -> ", not false)
+IO.puts("And will raise an error if we pass something else:")
+try do
+	nil or 1
+rescue
+	e ->
+		IO.write("  nil or 1 -> ")
+		IO.inspect(e)
+end
 
-IO.puts("\nRelaxed boolean operators")
+IO.puts("\nStrict xor has been removed; use :erlang.xor instead")
+Dump.puts(":erlang.xon(true, false) -> ", :erlang.xor(true, false))
+Dump.puts(":erlang.xor(true, true) -> ", :erlang.xor(true, true))
+try do
+	:erlang.xor(true, 1)
+rescue
+	e ->
+		IO.write(":erlang.xor(true, 1) -> ")
+		IO.inspect(e)
+end
+
+IO.puts("\nRelaxed boolean operators treat nil as false")
 Dump.puts("1 || 2 -> ", 1 || 2)
 Dump.puts("nil || 2 -> ", nil || 2)
 Dump.inspect("nil && 2 -> ", nil && 2)
 Dump.puts("1 && 2 -> ", 1 && 2)
-
 Dump.puts("!nil ->", ! nil)
 Dump.puts("!2 ->", ! 2)
 
+IO.puts("...but 0 as true (BEWARE!)")
+Dump.puts("0 || 2 -> ", 0 || 2)
+
 # Arithmetic operators
-IO.puts("\nArithmetic operators.")
-Dump.puts("1 / 2 -> ", 1 / 2)
+IO.puts("\nElixir supports 'standard' arithmetic operators.")
+Dump.puts("Division always returns a float: 1 / 2 -> ", 1 / 2)
 Dump.puts("div(7, 3) -> ", div(7, 3))
 Dump.puts("rem(7, 3) -> ", rem(7, 3))
-IO.puts("Sign behavior of rem")
+IO.puts("Sign behavior of rem (result takes sign of FIRST argument)")
 Dump.puts("rem(-7, 3) -> ", rem(-7, 3))
 Dump.puts("rem(7, -3) -> ", rem(7, -3))
 
 # Join operators
 IO.puts("\nConcatenate two binaries")
 Dump.inspect("<<1, 2>> <> <<2, 3>> -> ", <<1, 2>> <> <<2, 3>>)
+
+IO.puts("\nIn operator and ranges.")
 Dump.inspect("3 in 2..5 -> ", 3 in 2..5)
 Dump.inspect("2 in 2..5 -> ", 2 in 2..5)
 Dump.inspect("5 in 2..5 -> ", 5 in 2..5)
-Dump.inspect("6 in 2..6 -> ", 6 in 2..5)
+Dump.inspect("6 in 2..5 -> ", 6 in 2..5)
