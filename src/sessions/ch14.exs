@@ -45,3 +45,32 @@ end
 # 	{:ok, response} ->
 # 		IO.puts(response)
 # end
+
+
+# We now "fix" the issue from Spawn2 by not waiting for a response forever.
+
+# Create the process.
+IO.puts("\nIllustrate waiting a finite time for a response.")
+pid = spawn(Spawn3, :greet, [])
+
+# Send a message.
+IO.puts("Sending the first message...")
+send(pid, {self, "Elixir World"})
+
+IO.puts("...and waiting for the response.")
+receive do
+	{:ok, response} ->
+		IO.puts(response)
+end
+
+IO.puts("Sending the second message: 'Kermit', and...")
+send(pid, {self, "Kermit"})
+
+IO.puts("...wait for a response - but not forever.")
+receive do
+	{:ok, response} ->
+		IO.puts(response)
+after 500 ->
+				IO.puts("No response from the greeter.")
+end
+
