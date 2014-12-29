@@ -101,3 +101,18 @@ receive do
 after 500 ->
 				IO.puts("Hmmm. Where's the greeter?")
 end
+
+# A properly tail-recursive factorial function.
+IO.puts("\nA propertly tail-recursive factorial implemantation.")
+
+Enum.each([0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377,
+					 610, 987, 1587],
+					fn(n) ->
+							{elapsed, result} = :timer.tc(TailRecursive,
+																						:factorial, [n])
+							Dump.puts(:io_lib.format("TailRecursive.factorial(~w) = ",
+																			 [n]),
+												TailRecursive.factorial(n))
+							Dump.write("  took ", elapsed / 1000000)
+							IO.puts(" sec.")
+					end)
