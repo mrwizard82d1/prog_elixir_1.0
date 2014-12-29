@@ -74,3 +74,30 @@ after 500 ->
 				IO.puts("No response from the greeter.")
 end
 
+# After changing Spawn3 to handle multiple requests.
+
+IO.puts("\nChange the spawned process to handle multiple requests.")
+
+# Create the process.
+pid = spawn(Spawn4, :greet, [])
+
+# Send a(n asynchronous) message.
+IO.puts("Sending the first message...")
+send(pid, {self, "Spawn4 World"})
+
+IO.puts("...and wait for a response.")
+receive do
+	{:ok, response} ->
+		IO.puts(response)
+end
+
+IO.puts("Sending the second message...")
+send(pid, {self, "Kermit and Ms. Piggy"})
+
+IO.puts("...and it responds again!")
+receive do
+	{:ok, response} ->
+		IO.puts(response)
+after 500 ->
+				IO.puts("Hmmm. Where's the greeter?")
+end
