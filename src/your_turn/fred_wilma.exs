@@ -1,5 +1,4 @@
-require Dump
-
+# Module illustrating sending messages to multiple process.
 
 defmodule FredWilma do
 	
