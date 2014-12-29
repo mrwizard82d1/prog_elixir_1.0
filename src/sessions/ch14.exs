@@ -105,8 +105,10 @@ end
 # A properly tail-recursive factorial function.
 IO.puts("\nA propertly tail-recursive factorial implemantation.")
 
-Enum.each([0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377,
-					 610, 987, 1587],
+Enum.each([0, 1, 2, 3, 5, 8,
+					 # 13, 21, 34, 55, 89, 144, 233, 377,
+					 # 610, 987, 1587
+					],
 					fn(n) ->
 							{elapsed, result} = :timer.tc(TailRecursive,
 																						:factorial, [n])
@@ -116,3 +118,18 @@ Enum.each([0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377,
 							Dump.write("  took ", elapsed / 1000000)
 							IO.puts(" sec.")
 					end)
+
+# Run a sequence of chains.
+IO.puts("\nRun a sequence of chains.")
+IO.puts("If an error occurs mentioning a system limit,")
+IO.puts("you may need to invoke:")
+IO.puts("'elixir --erl \"+P 1000000\" src/sessions/ch14.exs'")
+
+Chain.run(10)
+Chain.run(100)
+Chain.run(1000)
+Chain.run(10000)
+Chain.run(100000)
+
+# Uncomment to see system limit error.
+# Chain.run(1000000)
