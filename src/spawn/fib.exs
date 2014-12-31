@@ -66,7 +66,7 @@ Enum.each(1..16, fn(num_processes) ->
 																								 to_process])
 										 if num_processes == 1 do
 											 IO.puts(inspect(result))
-											 IO.puts("\n #{time} (s)")
+											 IO.puts("\n #   time (s)")
 										 end
 										 :io.format("~2B     ~.2f~n",
 																[num_processes, time / 1000000])
