@@ -1,7 +1,7 @@
 # Cat counter using scheduler
 
 defmodule CatScheduler do
-	
+
 	def run(process_count, cat_module, cat_func, to_count) do
 		 1..process_count
 		|> Enum.map(fn(_) ->
@@ -63,20 +63,22 @@ defmodule CatCounter do
 
 end
 
-# to_process = CatCounter.ls_files("src/your_turn")
-# to_process = CatCounter.ls_files("D:/cygwin64/home/l.jones/professional/software/lib/dotnet/nhibernate/src/src/NHibernate.Test/NHSpecificTest")
-to_process = CatCounter.ls_files("d:/cygwin64/home/l.jones/tmp/erl_docs")
-max_process_count = 16
+defmodule CatDriver do
+	
+	def run() do
+		# to_process = CatCounter.ls_files("src/your_turn")
+		# to_process = CatCounter.ls_files("D:/cygwin64/home/l.jones/professional/software/lib/dotnet/nhibernate/src/src/NHibernate.Test/NHSpecificTest")
+		to_process = CatCounter.ls_files("d:/cygwin64/home/l.jones/tmp/erl_docs")
+		# max_process_count = 16
 
-Enum.each(1..max_process_count, fn(process_count) ->
-										{time, result} = :timer.tc(CatScheduler, :run,
-																							 [process_count,
-																								CatCounter, :count,
-																								to_process])
-										if process_count == 1 do
-											IO.puts(inspect(result))
-											IO.puts("\n #   time (s)")
-										end
-										:io.format("~2B    ~.2f~n",
-															 [process_count, time / 1000000])
-								end)
+		{time, result} = :timer.tc(CatScheduler, :run,
+															 [length(to_process), CatCounter,
+																:count, to_process])
+		IO.puts(inspect(result))
+		IO.puts("\n #   time (s)")
+		:io.format("~2B    ~.2f~n", [length(to_process), time / 1000000])
+	end
+	
+end
+
+CatDriver.run()
