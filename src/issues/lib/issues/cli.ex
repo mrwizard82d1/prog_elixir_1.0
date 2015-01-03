@@ -9,7 +9,9 @@ defmodule Issues.CLI do
   """
 
 	def run(argv) do
-		parse_args(argv)
+		argv
+		|> parse_args()
+		|> process()
 	end
 	
   @doc """
@@ -35,6 +37,28 @@ defmodule Issues.CLI do
 			_ ->
 				:help
 		end
+	end
+
+	@doc """
+  Process the request made by the user.
+
+  If the request was for help, display a help message and exit the
+  application. If the request was for GitHub project issues, query
+  GitHub, format the issues and display the requested issues.
+  """
+	def process(:help) do
+		IO.puts("""
+
+    Retrieve issues from a GitHub project.
+
+    usage: issues <user> <project> [count( = #{@default_count})]. 
+    """)
+
+		# Halt the system with an exit code of 0.
+		System.halt(0)
+	end
+	def process({user, project, _count}) do
+		Issues.GitHub.fetch(user, project)
 	end
 
 end
