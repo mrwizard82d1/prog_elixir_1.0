@@ -1,26 +1,45 @@
-IO.puts "# A (flat) list"
-IO.puts '> ["Humperdinck", "Buttercup", "Fezzik"]'
-["Humperdinck", "Buttercup", "Fezzik"]
+defmodule Helper do
+  def comment(text) do
+    IO.puts "# #{text}"
+  end
 
-IO.write "\n"
-IO.puts "# Another (nested) list"
-IO.puts '> ["milk", "butter", ["iocane", 12]]'
-["milk", "butter", ["iocane", 12]]
+  def read(expr) do
+    IO.puts "> #{expr}"
+  end
 
-IO.write "\n"
-IO.puts "# Matching a whole list"
-IO.puts "list = [1, 2, 3]"
+  def blank_line() do
+    IO.write "\n"
+  end
+
+  def print(list) do
+    IO.inspect list
+  end
+end
+
+Helper.comment "A (flat) list"
+Helper.read '["Humperdinck", "Buttercup", "Fezzik"]'
+Helper.print ["Humperdinck", "Buttercup", "Fezzik"]
+
+Helper.blank_line
+Helper.comment "Another (nested) list"
+Helper.read '["milk", "butter", ["iocane", 12]]'
+Helper.print ["milk", "butter", ["iocane", 12]]
+
+Helper.blank_line
+Helper.comment "Matching a whole list"
+Helper.read "list = [1, 2, 3]"
 list = [1, 2, 3]
-IO.inspect list
+Helper.print list
 
-IO.write "\n"
-IO.puts "Matching items in a list (destructuring)"
+Helper.blank_line
+Helper.comment "Matching items in a list (destructuring)"
+Helper.read "list = [1, 2, 3]"
 list = [1, 2, 3]
-IO.inspect "> [a b, c] = list"
+Helper.read "[a b, c] = list"
 [a, b, c] = list
-IO.puts "> a"
-IO.puts a
-IO.puts "> b"
-IO.puts b
-IO.puts "> c"
-IO.puts c
+Helper.read "a"
+Helper.print a
+Helper.read "b"
+Helper.print b
+Helper.read "c"
+Helper.print c
