@@ -10,6 +10,8 @@ defmodule Issues.CLI do
     argv
     |> parse_args
     |> process
+#    |> length
+#    |> IO.puts
   end
 
   @doc """
