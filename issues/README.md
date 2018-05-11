@@ -1,6 +1,7 @@
 # Issues
 
-**TODO: Add description**
+Code from the chapter, "Organizing a Project," of the book "Programming
+Elixir."
 
 ## Installation
 
