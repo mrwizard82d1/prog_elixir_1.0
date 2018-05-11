@@ -7,7 +7,9 @@ defmodule Issues.CLI do
   """
 
   def run(argv) do
-    parse_args(argv)
+    argv
+    |> parse_args
+    |> process
   end
 
   @doc """
@@ -39,5 +41,19 @@ defmodule Issues.CLI do
 
   def args_to_internal_representation(_) do
     :help
+  end
+
+  def process(:help) do
+    IO.puts """
+      usage: issues <username> <project> [count | #{@default_count} ]
+    """
+
+    System.halt(0)
+  end
+
+  def process({user, project, count}) do
+    IO.puts """
+  Fetching #{count} items for project, #{project}, of user, #{user}.
+"""
   end
 end
