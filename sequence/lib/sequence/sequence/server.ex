@@ -20,4 +20,8 @@ defmodule Sequence.Server do
 #  def handle_cast(_msg, state) do
 #    {:noreply, state}
 #  end
+
+  def handle_cast({:increment_number, by}, current_number) do
+    {:noreply, current_number + by}
+  end
 end
