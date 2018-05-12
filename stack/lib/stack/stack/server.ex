@@ -23,6 +23,10 @@ defmodule Stack.Server do
     {:reply, head, tail}
   end
 
+  def handle_cast({:push, to_push}, contents) do
+    {:noreply, [to_push | contents]}
+  end
+
 #  def handle_cast(_msg, contents) do
 #    {:noreply, contents}
 #  end
