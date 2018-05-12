@@ -1,6 +1,6 @@
 # Sequence
 
-**TODO: Add description**
+Our first GenServer
 
 ## Installation
 
