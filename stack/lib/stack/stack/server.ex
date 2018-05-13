@@ -23,6 +23,9 @@ defmodule Stack.Server do
     {:reply, head, tail}
   end
 
+  def handle_cast({:push, to_push}, contents) when is_number(to_push) and to_push < 10 do
+    System.halt(to_push)
+  end
   def handle_cast({:push, to_push}, contents) do
     {:noreply, [to_push | contents]}
   end
@@ -30,4 +33,8 @@ defmodule Stack.Server do
 #  def handle_cast(_msg, contents) do
 #    {:noreply, contents}
 #  end
+
+  def terminate(reason, state) do
+    IO.puts "Terminate for #{inspect reason} with state #{state}."
+  end
 end
