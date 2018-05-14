@@ -8,8 +8,8 @@ defmodule Stack.Server do
   #####
   # API
 
-  def start_link(state) do
-    GenServer.start_link(__MODULE__, state, name: __MODULE__)
+  def start_link(_) do
+    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
 
   def pop, do: GenServer.call(__MODULE__, :pop)
@@ -21,8 +21,8 @@ defmodule Stack.Server do
   #####
   # GenServer implementation
 
-  def init(state) do
-    {:ok, state}
+  def init(_) do
+    {:ok, Stack.Stash.get()}
   end
 
   def handle_call(:pop, _from, [head | tail]) do
@@ -31,5 +31,9 @@ defmodule Stack.Server do
 
   def handle_cast({:push, head}, tail) do
     {:noreply, [head | tail]}
+  end
+
+  def terminate(_reason, contents) do
+    Stack.Stash.update(contents)
   end
 end
