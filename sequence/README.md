@@ -1,6 +1,6 @@
 # Sequence
 
-**TODO: Add description**
+Generate a sequence of numbers robustly!
 
 ## Installation
 
