@@ -7,8 +7,9 @@ defmodule Sequence.Server do
 
   #####
   # External API
-  def start_link(current_number) do
-    GenServer.start_link(__MODULE__, current_number, name: __MODULE__)
+
+  def start_link(_) do
+    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
 
   def next_number do
@@ -22,8 +23,8 @@ defmodule Sequence.Server do
   #####
   # GenServer implementation
 
-  def init(starting_at) do
-    {:ok, starting_at}
+  def init(_) do
+    {:ok, Sequence.Stash.get()}
   end
 
   def handle_call(:next_number, _from, current_number) do
@@ -40,5 +41,9 @@ defmodule Sequence.Server do
 
   def format_status(_reason, [_pdict, state]) do
     [data: [{'State', "My current state is '#{inspect state}', and I'm happy."}]]
+  end
+
+  def terminate(_reason, current_number) do
+    Sequence.Stash.update(current_number)
   end
 end
