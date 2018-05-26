@@ -40,6 +40,18 @@ defmodule TwoEchoes do
   def await(n) do
     Enum.reverse(await(n, []))
   end
+
+  def partial_sequence(seq, fun) do
+    case Enum.find_index(seq, fun) do
+      nil ->
+        "No betty found."
+      n ->
+        ["Betty found at #{n}.",
+          seq
+          |> Enum.drop(n - 2)
+          |> Enum.take(5)]
+    end
+  end
 end
 
 fred_pid = spawn(TwoEchoes, :fred_echo, [])
@@ -48,11 +60,14 @@ betty_pid = spawn(TwoEchoes, :betty_echo, [])
 send_msg_to_each = TwoEchoes.make_send_msg_to_each(fred_pid, betty_pid)
 
 msgs = [:fred, :betty]
-count = 5
+# count = 20 # No 'betty' found at 20
+count = 40 # Betty found randomly in 40
 Stream.cycle([msgs])
 |> Stream.map(send_msg_to_each)
 |> Enum.take(count)
-|> IO.inspect
+# |> IO.inspect
 
-IO.inspect TwoEchoes.await(length(msgs) * count)
+chunk = TwoEchoes.await(length(msgs) * count)
+|> Enum.take(count)
 
+IO.inspect TwoEchoes.partial_sequence(chunk, &(&1 == :betty))
